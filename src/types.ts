@@ -5,12 +5,10 @@ export interface User {
 }
 
 export interface AuthorizationStrategy {
-    // Method for performing authorization checks
+    plugin: string;
     authorize: (user: User, reqPath: string) => Promise<boolean>;
-
-    // Optional method for composing this strategy with another strategy
     compose?: (otherStrategy: AuthorizationStrategy) => AuthorizationStrategy;
 }
 
-export type Plugin = (user: User, reqPath: string, authStrategy: any) => Promise<boolean>;
+export type Plugin = (user: User, reqPath: string) => Promise<boolean>;
 
