@@ -1,7 +1,7 @@
 import React, {createContext} from 'react';
 import {composeStrategies} from '../utils';
 import {authorizationMiddleware} from '../middleware';
-import {AuthorizationStrategy, Plugin, User} from '../types';
+import {AuthorizationStrategy, Plugin} from '../types';
 
 interface AuthorizationProviderProps {
     plugins: Record<string, Plugin>;
@@ -11,7 +11,7 @@ interface AuthorizationProviderProps {
 }
 
 // Create context for the authorization middleware
-export const AuthorizationContext = createContext<(req: any, res: any, next: any) => void>(() => {});
+export const AuthorizationContext = createContext<(req: any, res: any, next: any) => any>(() => {});
 
 // Create the authorization middleware and provide it through the context
 export const AuthorizationProvider: React.FC<AuthorizationProviderProps> =
@@ -23,8 +23,8 @@ export const AuthorizationProvider: React.FC<AuthorizationProviderProps> =
         const pluginStrategies = filteredPlugins.map((plugin) => {
             return {
                 plugin: plugin.name,
-                async authorize(user: User, reqPath: string) {
-                    return plugin(user, reqPath);
+                async authorize(dependencies: Record<string, unknown>, reqPath: string) {
+                    return plugin(dependencies, reqPath);
                 },
             };
         });

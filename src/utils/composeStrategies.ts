@@ -1,4 +1,4 @@
-import { AuthorizationStrategy, User } from '../types';
+import { AuthorizationStrategy } from '../types';
 
 /**
  * Composes an array of AuthorizationStrategy objects into a single strategy.
@@ -15,9 +15,9 @@ export function composeStrategies(strategies: AuthorizationStrategy[]): Authoriz
 
     return {
         plugin: pluginNames,
-        async authorize(user: User, reqPath: string) {
+        async authorize(dependencies: Record<string, unknown>, reqPath: string) {
             for (const strategy of strategies) {
-                const isAuthorized = await strategy.authorize(user, reqPath);
+                const isAuthorized = await strategy.authorize(dependencies, reqPath);
                 if (!isAuthorized) {
                     return false;
                 }

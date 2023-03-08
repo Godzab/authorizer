@@ -1,5 +1,5 @@
-import { AuthorizationStrategy, User } from '../types';
-import { composeStrategies } from '../utils/composeStrategies';
+import { composeStrategies } from '../utils';
+import { AuthorizationStrategy } from '../types';
 
 /**
  * Creates a middleware function that performs authorization checks on incoming requests.
@@ -9,16 +9,15 @@ import { composeStrategies } from '../utils/composeStrategies';
  */
 export function authorizationMiddleware(strategies: AuthorizationStrategy[]): any {
     const composedStrategy = composeStrategies(strategies);
-
     return async (req: any, res: any, next: any) => {
         // Get the authenticated user from the request object
-        const user: User = req.user;
+        const dependencies: Record<string, unknown> = req;
 
         // Check if the user is authorized to access the requested resource
-        const isAuthorized = await composedStrategy.authorize(user, req.path);
+        const isAuthorized = await composedStrategy.authorize(dependencies, req.path);
 
         if (!isAuthorized) {
-            res.sendStatus(403);
+            res();
             return;
         }
 
